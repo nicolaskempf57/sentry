@@ -5,54 +5,63 @@
 
 # See docs.getsentry.com/on-premise/server/ for full
 # instructions
+# Generate secret key :
+# docker-compose run --rm web config generate-secret-key
+# Upgrade db :
+# docker-compose run --rm web upgrade
 
 version: '2'
 services:
   base:
-    restart: unless-stopped
+    restart: always
     build: .
     environment:
       # Run `docker-compose run web config generate-secret-key`
       # to get the SENTRY_SECRET_KEY value.
-      # SENTRY_SECRET_KEY: ''
+      SENTRY_SECRET_KEY: 
       SENTRY_MEMCACHED_HOST: memcached
       SENTRY_REDIS_HOST: redis
       SENTRY_POSTGRES_HOST: postgres
       SENTRY_EMAIL_HOST: smtp
+
     volumes:
-      - ./data/sentry:/var/lib/sentry/files
+      - sentry:/var/lib/sentry/files
 
   smtp:
-    restart: unless-stopped
+    restart: always
     image: tianon/exim4
 
   memcached:
-    restart: unless-stopped
+    restart: always
     image: memcached:1.4
 
   redis:
-    restart: unless-stopped
+    restart: always
     image: redis:3.2-alpine
 
   postgres:
-    restart: unless-stopped
+    restart: always
     image: postgres:9.5
     volumes:
-      - ./data/postgres:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
 
   web:
-    restart: unless-stopped
+    restart: always
     extends: base
     links:
       - redis
       - postgres
       - memcached
       - smtp
+    environment:
+      VIRTUAL_PROTO: http
+      VIRTUAL_HOST: localhost
+      VIRTUAL_PORT: 9000
     ports:
       - '9000:9000'
 
   cron:
-    restart: unless-stopped
+    restart: always
     extends: base
     command: run cron
     links:
@@ -62,7 +71,7 @@ services:
       - smtp
 
   worker:
-    restart: unless-stopped
+    restart: always
     extends: base
     command: run worker
     links:
@@ -70,3 +79,7 @@ services:
       - postgres
       - memcached
       - smtp
+
+volumes:
+  db: {}
+  sentry: {}
