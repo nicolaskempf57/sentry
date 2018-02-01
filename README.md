@@ -1,5 +1,23 @@
 # Sentry On-Premise
 
+Avant de démarrer le docker-compose, il faut :
+
+## Générer une secret key
+
+```bash
+docker-compose run --rm web config generate-secret-key
+```
+
+## Mettre à jour la base de données
+
+```bash
+docker-compose run --rm web upgrade
+```
+
+La mise à jour de la base est nécessaire à chaque mise à jour de Sentry.
+
+# Official README
+
 Official bootstrap for running your own [Sentry](https://sentry.io/) with [Docker](https://www.docker.com/).
 
 ## Requirements
