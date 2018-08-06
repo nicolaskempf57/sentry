@@ -1,1 +1,2 @@
-FROM sentry:9-onbuild
+ARG VERSION=9
+FROM sentry:${VERSION}-onbuild
