@@ -15,14 +15,14 @@ before_script:
 after_script:
 - docker images
 
-build sentry:
+build sentry multi organizations:
   stage: build
   script:
   - docker build --pull --tag $CI_REGISTRY_IMAGE .
   - docker push $CI_REGISTRY_IMAGE:latest
 
-build sentry9:
+build sentry single organization:
   stage: build
   script:
-  - docker build --build-arg VERSION=9 --pull --tag $CI_REGISTRY_IMAGE:9 .
-  - docker push $CI_REGISTRY_IMAGE:9
+  - docker build --build-arg SINGLE=true --pull --tag $CI_REGISTRY_IMAGE:single .
+  - docker push $CI_REGISTRY_IMAGE:single
