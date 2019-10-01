@@ -18,11 +18,11 @@ after_script:
 build sentry multi organizations:
   stage: build
   script:
-  - docker build --pull --tag $CI_REGISTRY_IMAGE .
+  - docker build --build-arg SINGLE=False --pull --tag $CI_REGISTRY_IMAGE .
   - docker push $CI_REGISTRY_IMAGE:latest
 
 build sentry single organization:
   stage: build
   script:
-  - docker build --build-arg SINGLE=true --pull --tag $CI_REGISTRY_IMAGE:single .
+  - docker build --build-arg SINGLE=True --pull --tag $CI_REGISTRY_IMAGE:single .
   - docker push $CI_REGISTRY_IMAGE:single
